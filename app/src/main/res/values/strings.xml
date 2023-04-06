@@ -1,0 +1,31 @@
+<resources>
+
+    <string name="app_name">Local language translation </string>
+    <string name="enter_text_in_english">Enter text in english</string>
+    <string name="translate">Translate</string>
+    <string name="select_source_language_prompt">Select source language:</string>
+    <string name="select_target_language_prompt">Select target language:</string>
+    <string name="source_language">Source Language</string>
+    <string name="target_language">Target Language</string>
+    <string name="to">TO</string>
+    <string name="enter_text">Enter text</string>
+    <string name="enter_text_to_translate">Enter text to translate</string>
+    <string name="copy">Copy</string>
+
+
+    <!-- arrays.xml -->
+    <string-array name="source_languages">
+        <item>Select</item>
+        <item>English</item>
+        <item>Hausa</item>
+        <item>Igbo</item>
+        <item>Yoruba</item>
+    </string-array>
+    <string-array name="target_languages">
+        <item>Select</item>
+        <item>English</item>
+        <item>Hausa</item>
+        <item>Igbo</item>
+        <item>Yoruba</item>
+    </string-array>
+</resources>
