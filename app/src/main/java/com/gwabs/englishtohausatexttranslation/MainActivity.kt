@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        // Supported languege dropdown menu items
         val sourceAdapter =
             ArrayAdapter.createFromResource(this, R.array.source_languages, R.layout.spinner_item)
         sourceAdapter.setDropDownViewResource(R.layout.spinner_item)
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         targetAdapter.setDropDownViewResource(R.layout.spinner_item)
         binding.spinnerTargetLanguage.adapter = targetAdapter
 
+        // click listener to trigger the translation function after inputs are validated successfully
         binding.buttonTranslate.setOnClickListener {
 
             try {
@@ -55,19 +57,20 @@ class MainActivity : AppCompatActivity() {
                         getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
                     )
                 ) {
-                    translateText(this)
+                    translateText()
                 } else {
                     // Handle the case where the text is empty or contains only whitespace
 
                     binding.editTextSourceText.error = "Text cant be empty"
                 }
             }catch (e:Exception){
-                Log.i("TAG",e.toString())
+              //  Log.i("TAG",e.toString())
             }
 
 
         }
 
+        // click listener to trigger the copy function if the result is not empty
         binding.buttonCopy.setOnClickListener {
             try {
                 if (!TextUtils.isEmpty(translatedText))
@@ -83,10 +86,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     // this function validate the inputted text
+    // inputs validation function
     private fun validateText(text: String, from: String, to: String): Boolean {
         return text.trim().isNotEmpty() && from.trim().isNotEmpty() && to.trim().isNotEmpty()
     }
 
+
+    // function to enable copy and pest
     private fun copy(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Translated Text", text)
@@ -95,7 +101,8 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun translateText(context: Context) {
+    // this function send a translation request to the api and  return the result
+    private fun translateText() {
         val sourceLanguage = getLanguageCode(binding.spinnerSourceLanguage.selectedItem.toString())
 
         val targetLanguage = getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
@@ -106,10 +113,13 @@ class MainActivity : AppCompatActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
 
+
         val client = HttpClientSingleton.getInstance()
 
         val mediaType = "application/x-www-form-urlencoded".toMediaTypeOrNull()
         val body = RequestBody.create(mediaType, "source_language=${sourceLanguage}&target_language=${targetLanguage}&text=${sourceText}")
+
+        // api request requirements such as auth key and base url
 
         val request = Request.Builder()
             .url("https://text-translator2.p.rapidapi.com/translate")
@@ -121,27 +131,31 @@ class MainActivity : AppCompatActivity() {
 
         val gson = Gson()
 
+
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
 
                 if (response.isSuccessful) {
-                    Log.i("TAG", response.body.toString())
+                    //Log.i("TAG", response.body.toString())
 
                     val responseBody = response.body?.string()
                     val jsonObject = gson.fromJson(responseBody, JsonObject::class.java)
+
+                    // here we retrieve  the translated text and we assign it to a variable result
                     val result = jsonObject.getAsJsonObject("data").get("translatedText").toString()
                    // Log.i("TAG", translatedText)
                     translatedText = result
+                    // set the value of result to the textview that display the translated text
                     binding.textViewTranslatedText.text = result.replace("\"", "")
                     binding.buttonCopy.visibility = View.VISIBLE
                 } else {
-                    Toast.makeText(context,response.body.toString(),Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity,response.body.toString(),Toast.LENGTH_SHORT).show()
                    // Log.i("TAG", response.body.toString())
                     binding.buttonCopy.visibility = View.GONE
                 }
             } catch (e: Exception) {
-                Toast.makeText(context,e.toString(),Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity,e.toString(),Toast.LENGTH_SHORT).show()
                 binding.buttonCopy.visibility = View.GONE
                // Log.i("TAG", e.toString())
             } finally {
