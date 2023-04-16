@@ -7,24 +7,29 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.gwabs.englishtohausatexttranslation.databinding.ActivityMainBinding
-import com.gwabs.englishtohausatexttranslation.network.data.TranslationRepository
+import com.gwabs.englishtohausatexttranslation.network.HttpClientSingleton
 import kotlinx.coroutines.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Request
+import okhttp3.RequestBody
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val mainScope = MainScope()
     private lateinit var translatedText: String
 
 
     @RequiresApi(Build.VERSION_CODES.S)
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -50,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                         getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
                     )
                 ) {
-                    translateText()
+                    translateText(this)
                 } else {
                     // Handle the case where the text is empty or contains only whitespace
 
@@ -65,21 +70,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonCopy.setOnClickListener {
             try {
-
-                if (validateText(
-                        binding.editTextSourceText.text.toString(),
-                        getLanguageCode(binding.spinnerSourceLanguage.selectedItem.toString()),
-                        getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
-                    )
-                ) {
+                if (!TextUtils.isEmpty(translatedText))
                     copy(translatedText)
-                } else {
-                    Toast.makeText(this, "enter text to translate", Toast.LENGTH_SHORT).show()
-                }
 
             }catch (e:Exception){
-
-                Log.i("TAG",e.toString())
+                //Log.i("TAG",e.toString())
             }
 
         }
@@ -100,6 +95,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    /*
     @RequiresApi(Build.VERSION_CODES.S)
     private fun translateText() {
         val sourceLanguage = getLanguageCode(binding.spinnerSourceLanguage.selectedItem.toString())
@@ -112,18 +108,102 @@ class MainActivity : AppCompatActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
 
+        try {
+            val client = HttpClientSingleton.getInstance()
+
+            val mediaType = "application/x-www-form-urlencoded".toMediaTypeOrNull()
+            val body = RequestBody.create(mediaType, "source_language=${sourceLanguage}&target_language=${targetLanguage}&text=${sourceText}")
+
+            val request = Request.Builder()
+                .url("https://text-translator2.p.rapidapi.com/translate")
+                .post(body)
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .addHeader("X-RapidAPI-Key", "f68f84c6f0mshe68bae84199ee04p13ec73jsnb779bc1a1195")
+                .addHeader("X-RapidAPI-Host", "text-translator2.p.rapidapi.com")
+                .build()
+
+            val gson = Gson()
+            val response = client.newCall(request).execute()
+
+            if (response.isSuccessful){
+                Log.i("TAG",response.body.toString())
+
+                val responseBody = response.body?.string()
+                val jsonObject = gson.fromJson(responseBody, JsonObject::class.java)
+                val translatedText = jsonObject.getAsJsonObject("data").get("translatedText").toString()
+                Log.i("TAG",translatedText)
+                progressDialog.dismiss()
+            }else{
+                Log.i("TAG",response.body.toString())
+                progressDialog.dismiss()
+            }
+        }catch (e:Exception){
+            Log.i("TAG",e.toString())
+            progressDialog.dismiss()
+        }
+
+
+
+        /*
+        val translationApi = RetrofitClient.api
+
+
+// Example usage with coroutines
+
+        mainScope.launch {
+
+            try {
+                val response = translationApi.translate(
+                    text = sourceText,
+                    toLanguage = targetLanguage,
+                    fromLanguage = sourceLanguage
+                )
+
+                if (releaseInstance()){
+
+                    binding.textViewTranslatedText.text = response.toString()
+                    translatedText = response.toString()
+                }
+            }catch (e: Exception) {
+                // Display an error message if the translation failed
+
+                Log.i("TAG", e.toString())
+                Toast.makeText(
+                    this@MainActivity,
+                    "Translation failed: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } finally {
+                // Hide the progress dialog
+                progressDialog.dismiss()
+            }
+
+        }
+
+
+
+
+        /*
         // Launch a coroutine to perform the translation
+        /*
         mainScope.launch {
             try {
                 // Call the translation API
-                val outputText = TranslationRepository.translateText(
-                    "",
-                    sourceLanguage,
-                    targetLanguage,
-                    sourceText
+              //  val outputText
+                // Update the UI with the translated text
+                val response = translationApi.translate(
+                    text = "Hello",
+                    toLanguage = "es",
+                    fromLanguage = "en"
                 )
 
-                // Update the UI with the translated text
+                if (response.success) {
+                    val translation = response.result
+                    // Do something with the translated text
+                } else {
+                    val errorMessage = response.message
+                    // Handle error
+                }
                 binding.textViewTranslatedText.text = outputText
                 translatedText = outputText
 
@@ -141,17 +221,76 @@ class MainActivity : AppCompatActivity() {
                 progressDialog.dismiss()
             }
         }
+
+         */
+
+         */
+
+
+
+
+         */
     }
 
-    private fun getLanguageCode(language: String): String {
-        return when (language) {
-            "English" -> "en"
-            "Hausa" -> "ha"
-            "Igbo" -> "ig"
-            "Yoruba" -> "yo"
-            else -> throw IllegalArgumentException("Unsupported language: $language")
+
+     */
+
+    private fun translateText(context: Context) {
+        val sourceLanguage = getLanguageCode(binding.spinnerSourceLanguage.selectedItem.toString())
+
+        val targetLanguage = getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
+
+        val sourceText = binding.editTextSourceText.text.toString()
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Translating...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        val client = HttpClientSingleton.getInstance()
+
+        val mediaType = "application/x-www-form-urlencoded".toMediaTypeOrNull()
+        val body = RequestBody.create(mediaType, "source_language=${sourceLanguage}&target_language=${targetLanguage}&text=${sourceText}")
+
+        val request = Request.Builder()
+            .url("https://text-translator2.p.rapidapi.com/translate")
+            .post(body)
+            .addHeader("content-type", "application/x-www-form-urlencoded")
+            .addHeader("X-RapidAPI-Key", "replace with your api key")
+            .addHeader("X-RapidAPI-Host", "text-translator2.p.rapidapi.com")
+            .build()
+
+        val gson = Gson()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
+
+                if (response.isSuccessful) {
+                    Log.i("TAG", response.body.toString())
+
+                    val responseBody = response.body?.string()
+                    val jsonObject = gson.fromJson(responseBody, JsonObject::class.java)
+                    val result = jsonObject.getAsJsonObject("data").get("translatedText").toString()
+                   // Log.i("TAG", translatedText)
+                    translatedText = result
+                    binding.textViewTranslatedText.text = result.replace("\"", "")
+                    binding.buttonCopy.visibility = View.VISIBLE
+                } else {
+                    Toast.makeText(context,response.body.toString(),Toast.LENGTH_SHORT).show()
+                   // Log.i("TAG", response.body.toString())
+                    binding.buttonCopy.visibility = View.GONE
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context,e.toString(),Toast.LENGTH_SHORT).show()
+                binding.buttonCopy.visibility = View.GONE
+               // Log.i("TAG", e.toString())
+            } finally {
+                progressDialog.dismiss()
+
+            }
         }
     }
 
 
 }
+

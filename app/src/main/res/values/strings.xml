@@ -20,6 +20,8 @@
         <item>Hausa</item>
         <item>Igbo</item>
         <item>Yoruba</item>
+        <item>French</item>
+        <item>Arabic</item>
     </string-array>
     <string-array name="target_languages">
         <item>Select</item>
@@ -27,5 +29,7 @@
         <item>Hausa</item>
         <item>Igbo</item>
         <item>Yoruba</item>
+        <item>French</item>
+        <item>Arabic</item>
     </string-array>
 </resources>
