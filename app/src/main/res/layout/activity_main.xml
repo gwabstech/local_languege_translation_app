@@ -148,14 +148,26 @@
             android:layout_width="wrap_content"
             android:layout_margin="10dp"
             android:padding="10dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             android:layout_height="wrap_content"
             android:text="@string/copy" />
 
 
 
+        <Button
+            android:id="@+id/imageToText"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            android:text="Image To Text"
+            android:layout_height="wrap_content" />
+
 
     </LinearLayout>
+
+
+
 
 
 

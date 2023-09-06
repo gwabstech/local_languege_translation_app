@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                         getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
                     )
                 ) {
-                    translateText()
+                    translateText(this)
                 } else {
                     // Handle the case where the text is empty or contains only whitespace
 
@@ -82,6 +83,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        binding.imageToText.setOnClickListener {
+            val startImageToText = Intent(this@MainActivity,imageToText::class.java)
+            startActivity(startImageToText)
+
+        }
 
     }
 
@@ -102,13 +108,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     // this function send a translation request to the api and  return the result
-    private fun translateText() {
+    private fun translateText(context: Context) {
         val sourceLanguage = getLanguageCode(binding.spinnerSourceLanguage.selectedItem.toString())
 
         val targetLanguage = getLanguageCode(binding.spinnerTargetLanguage.selectedItem.toString())
 
         val sourceText = binding.editTextSourceText.text.toString()
-        val progressDialog = ProgressDialog(this)
+        val progressDialog = ProgressDialog(context)
         progressDialog.setMessage("Translating...")
         progressDialog.setCancelable(false)
         progressDialog.show()

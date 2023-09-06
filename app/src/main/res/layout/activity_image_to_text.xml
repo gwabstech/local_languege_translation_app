@@ -30,8 +30,10 @@
             android:layout_width="150dp"
             android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:id="@+id/btnUpload"
             android:src="@drawable/baseline_upload_24"
             android:layout_height="150dp"/>
+
         <TextView
             android:layout_width="match_parent"
             android:textAlignment="center"
@@ -47,6 +49,7 @@
             android:id="@+id/selected_image"
             android:layout_margin="15dp"
             android:textColor="@color/black"
+
             android:lineSpacingExtra="0.2dp"
             android:letterSpacing="0.1"
             android:text="Selectd Image"
