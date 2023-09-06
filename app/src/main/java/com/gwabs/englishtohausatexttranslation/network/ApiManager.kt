@@ -1,10 +1,12 @@
 package com.gwabs.englishtohausatexttranslation.network
 
+import android.util.Log
 import okhttp3.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.io.IOException
 
 class ApiManager private constructor() {
@@ -23,7 +25,9 @@ class ApiManager private constructor() {
     }
 
     // work on this this night
-    suspend fun sendImageToTextRequest(imageData: ByteArray, language: String = "English"): String {
+    suspend fun sendImageToTextRequest(imageData: ByteArray, language: String = "English") : String{
+        var formattedText:String = ""
+        var proceesedText:String = ""
         val mediaType = "multipart/form-data; boundary=---011000010111000001101001"
             .toMediaTypeOrNull()
 
@@ -41,13 +45,20 @@ class ApiManager private constructor() {
             .addHeader("X-RapidAPI-Host", "ocr-image-to-text-multilingual.p.rapidapi.com")
             .build()
 
-        return withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             try {
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
 
-                    response.body?.string() ?: ""
+                    val responseBody = response.body
+                    val responseBodyString = responseBody?.string()
+                    // Parse the response body string to a JSONObject
+                    val responseData = JSONObject(responseBodyString!!)
 
+                    proceesedText = responseData.getString("text").trimIndent()
+
+                    formattedText = proceesedText.replace(Regex("[^a-zA-Z ]"), "")
+                    Log.i("TAG",formatString(formattedText).trimIndent())
 
 
                 } else {
@@ -58,5 +69,15 @@ class ApiManager private constructor() {
                 "Request failed with exception: ${e.message}"
             }
         }
+        return formatString(formattedText)
+    }
+
+    fun formatString(text: String): String {
+        // Remove all non-text characters
+        val nonTextCharacters = "\\W"
+        val filteredText = text.replace(nonTextCharacters, "")
+
+        // Return the formatted text
+        return filteredText
     }
 }
