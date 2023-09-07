@@ -1,6 +1,8 @@
 package com.gwabs.englishtohausatexttranslation.network
 
+import android.content.Context
 import android.util.Log
+import com.techiness.progressdialoglibrary.ProgressDialog
 import okhttp3.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,7 +27,7 @@ class ApiManager private constructor() {
     }
 
     // work on this this night
-    suspend fun sendImageToTextRequest(imageData: ByteArray, language: String = "English") : String{
+    fun sendImageToTextRequest(imageData: ByteArray, language: String = "English",progressDialog: ProgressDialog) : String{
         var formattedText:String = ""
         var proceesedText:String = ""
         val mediaType = "multipart/form-data; boundary=---011000010111000001101001"
@@ -37,7 +39,7 @@ class ApiManager private constructor() {
             .addFormDataPart("file", "image", imageData.toRequestBody(mediaType))
             .build()
 
-        val request = Request.Builder()
+         val request = Request.Builder()
             .url("https://ocr-image-to-text-multilingual.p.rapidapi.com/imagetotext")
             .post(requestBody)
             .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
@@ -45,7 +47,7 @@ class ApiManager private constructor() {
             .addHeader("X-RapidAPI-Host", "ocr-image-to-text-multilingual.p.rapidapi.com")
             .build()
 
-        withContext(Dispatchers.IO) {
+
             try {
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {
@@ -59,16 +61,20 @@ class ApiManager private constructor() {
 
                     formattedText = proceesedText.replace(Regex("[^a-zA-Z ]"), "")
                     Log.i("TAG",formatString(formattedText).trimIndent())
-
+                    progressDialog.dismiss()
 
                 } else {
-                    "Request failed with code: ${response.code}"
+                    progressDialog.dismiss()
+                    Log.i("TAG", "Request failed with code: ${response.code}")
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
-                "Request failed with exception: ${e.message}"
+                progressDialog.dismiss()
+                Log.i("TAG","Request failed with exception: ${e.message}")
+
             }
-        }
+
+
         return formatString(formattedText)
     }
 

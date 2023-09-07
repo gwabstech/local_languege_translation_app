@@ -58,7 +58,14 @@ dependencies {
 
 
     implementation 'com.karumi:dexter:6.2.3'
+    implementation("com.github.techinessoverloaded:progress-dialog:1.5.1")
+    def lifecycle_version = "2.6.2"
 
+    dependencies {
+        implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+        implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+        implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    }
 
 
 }

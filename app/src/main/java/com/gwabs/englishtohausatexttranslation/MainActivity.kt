@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        supportActionBar!!.title = "Home"
 
         // Supported languege dropdown menu items
         val sourceAdapter =
@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.imageToText.setOnClickListener {
-            val startImageToText = Intent(this@MainActivity,imageToText::class.java)
-            startActivity(startImageToText)
+            val startImageToTextActivity = Intent(this@MainActivity,ImageToTextActivity::class.java)
+            startActivity(startImageToTextActivity)
 
         }
 
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
             .url("https://text-translator2.p.rapidapi.com/translate")
             .post(body)
             .addHeader("content-type", "application/x-www-form-urlencoded")
-            .addHeader("X-RapidAPI-Key", "replace with your api key")
+            .addHeader("X-RapidAPI-Key", "f68f84c6f0mshe68bae84199ee04p13ec73jsnb779bc1a1195")
             .addHeader("X-RapidAPI-Host", "text-translator2.p.rapidapi.com")
             .build()
 
