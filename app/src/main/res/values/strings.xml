@@ -11,6 +11,12 @@
     <string name="enter_text">Enter text</string>
     <string name="enter_text_to_translate">Enter text to translate</string>
     <string name="copy">Copy</string>
+    <string name="forget_passord">Forget Passord</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="logout">Logout</string>
+    <string name="enter_your_email">Enter your email</string>
 
 
     <!-- arrays.xml -->

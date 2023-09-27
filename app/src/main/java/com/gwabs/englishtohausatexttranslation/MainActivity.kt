@@ -9,11 +9,15 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.gwabs.englishtohausatexttranslation.databinding.ActivityMainBinding
@@ -89,6 +93,24 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_logout -> {
+                Firebase.auth.signOut()
+                val intent = Intent(this@MainActivity,LoginAndSignup::class.java)
+                startActivity(intent)
+                this.finish()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     // this function validate the inputted text
@@ -167,9 +189,11 @@ class MainActivity : AppCompatActivity() {
             } finally {
                 progressDialog.dismiss()
 
+
             }
         }
     }
+
 
 
 }
