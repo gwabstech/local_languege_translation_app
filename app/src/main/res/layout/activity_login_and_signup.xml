@@ -13,9 +13,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="100dp"
-        android:src="@drawable/abu"
+        android:src="@drawable/kpt"
         android:layout_gravity="center"/>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -61,9 +61,9 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
-        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:minHeight="48dp"
+        android:background="#007e33"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/login" />
@@ -83,7 +83,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSignup"
-        style="@style/Widget.MaterialComponents.Button"
+        android:background="#007e33"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"

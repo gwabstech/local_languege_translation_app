@@ -24,12 +24,20 @@
         <item>Select</item>
         <item>English</item>
         <item>Hausa</item>
+        <item>Igbo</item>
+        <item>Yoruba</item>
+        <item>Arabic</item>
+        <item>French</item>
 
     </string-array>
     <string-array name="target_languages">
         <item>Select</item>
         <item>English</item>
         <item>Hausa</item>
+        <item>Igbo</item>
+        <item>Yoruba</item>
+         <item>Arabic</item>
+        <item>French</item>
 
     </string-array>
 </resources>
