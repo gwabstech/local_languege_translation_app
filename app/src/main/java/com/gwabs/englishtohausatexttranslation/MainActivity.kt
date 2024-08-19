@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
             .url("https://text-translator2.p.rapidapi.com/translate")
             .post(body)
             .addHeader("content-type", "application/x-www-form-urlencoded")
-            .addHeader("X-RapidAPI-Key", "f68f84c6f0mshe68bae84199ee04p13ec73jsnb779bc1a1195")
+            .addHeader("X-RapidAPI-Key", "b8c8ee6e22mshf73df44bf8ee035p1ccf3cjsne248a0d7ba02")
             .addHeader("X-RapidAPI-Host", "text-translator2.p.rapidapi.com")
             .build()
 

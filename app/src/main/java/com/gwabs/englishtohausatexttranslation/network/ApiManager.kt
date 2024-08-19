@@ -26,10 +26,14 @@ class ApiManager private constructor() {
         }
     }
 
-    // work on this this night
-    fun sendImageToTextRequest(imageData: ByteArray, language: String = "English",progressDialog: ProgressDialog) : String{
-        var formattedText:String = ""
-        var proceesedText:String = ""
+
+    fun sendImageToTextRequest(
+        imageData: ByteArray,
+        language: String = "English",
+        progressDialog: ProgressDialog
+    ): String {
+        var formattedText: String = ""
+        var proceesedText: String = ""
         val mediaType = "multipart/form-data; boundary=---011000010111000001101001"
             .toMediaTypeOrNull()
 
@@ -39,40 +43,40 @@ class ApiManager private constructor() {
             .addFormDataPart("file", "image", imageData.toRequestBody(mediaType))
             .build()
 
-         val request = Request.Builder()
+        val request = Request.Builder()
             .url("https://ocr-image-to-text-multilingual.p.rapidapi.com/imagetotext")
             .post(requestBody)
             .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
-            .addHeader("X-RapidAPI-Key", "f68f84c6f0mshe68bae84199ee04p13ec73jsnb779bc1a1195")
+            .addHeader("X-RapidAPI-Key", "b8c8ee6e22mshf73df44bf8ee035p1ccf3cjsne248a0d7ba02")
             .addHeader("X-RapidAPI-Host", "ocr-image-to-text-multilingual.p.rapidapi.com")
             .build()
 
 
-            try {
-                val response = client.newCall(request).execute()
-                if (response.isSuccessful) {
+        try {
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) {
 
-                    val responseBody = response.body
-                    val responseBodyString = responseBody?.string()
-                    // Parse the response body string to a JSONObject
-                    val responseData = JSONObject(responseBodyString!!)
+                val responseBody = response.body
+                val responseBodyString = responseBody?.string()
+                // Parse the response body string to a JSONObject
+                val responseData = JSONObject(responseBodyString!!)
 
-                    proceesedText = responseData.getString("text").trimIndent()
+                proceesedText = responseData.getString("text").trimIndent()
 
-                    formattedText = proceesedText.replace(Regex("[^a-zA-Z ]"), "")
-                    Log.i("TAG",formatString(formattedText).trimIndent())
-                    progressDialog.dismiss()
-
-                } else {
-                    progressDialog.dismiss()
-                    Log.i("TAG", "Request failed with code: ${response.code}")
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
+                formattedText = proceesedText.replace(Regex("[^a-zA-Z ]"), "")
+                Log.i("TAG", formatString(formattedText).trimIndent())
                 progressDialog.dismiss()
-                Log.i("TAG","Request failed with exception: ${e.message}")
 
+            } else {
+                progressDialog.dismiss()
+                Log.i("TAG", "Request failed with code: ${response.code}")
             }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            progressDialog.dismiss()
+            Log.i("TAG", "Request failed with exception: ${e.message}")
+
+        }
 
 
         return formatString(formattedText)
